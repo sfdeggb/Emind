@@ -1,0 +1,13 @@
+/*调整麦克风的大小*/
+#audio {
+	height:80px !important;
+}
+/**调整登录页面的字体大小*/
+
+.gradio-container-4-19-1 .prose h1{
+	margin-top: 20px;
+}
+/**调整三个按钮的大小*/
+#send_button,#clear_button,#upload_button{
+	height: 80px;
+}
