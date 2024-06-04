@@ -1,4 +1,4 @@
-#  <img width="50" height=50 alt="DALL·E" src="https://github.com/sfdeggb/Emind/assets/95692531/77fd75ca-9ab9-4746-8a01-966f8c1902e0"> EMIND:AI Music Recommendation and Generation Copliot
+#  <img width="25" height=25 alt="DALL·E" src="https://github.com/sfdeggb/Emind/assets/95692531/77fd75ca-9ab9-4746-8a01-966f8c1902e0"> EMIND:AI Music Recommendation and Generation Copliot
 <img width="1000" height=200 alt="DALL·E 2024-06-04 19 40 04 - Design a horizontal logo for 'Music Agent', an AI-powered music recommendation and generation system  The logo should prominently feature musical elem-2" src="https://github.com/sfdeggb/Emind/assets/95692531/342e8269-3b7b-469c-a0cc-7a10a4b52725">
 
 
