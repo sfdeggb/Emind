@@ -1,5 +1,5 @@
 """
-EMIND 现代化Web服务器 - 中文界面
+EMIND 现代化Web服务器 - 完整集成版本
 """
 
 import gradio as gr
@@ -12,7 +12,7 @@ project_root = Path(__file__).parent.parent.parent.parent
 sys.path.insert(0, str(project_root))
 
 from .pages.modern_index import create_modern_index_ui
-from .pages.modern_chat import ModernChatInterface
+from .pages.modern_chat_integrated import IntegratedChatInterface
 from .pages.modern_settings import create_modern_settings_ui
 from .components.modern_components import ModernUIComponents
 
@@ -20,8 +20,8 @@ from .components.modern_components import ModernUIComponents
 def create_modern_emind_app():
     """创建现代化EMIND应用程序"""
     
-    # 初始化聊天界面
-    chat_interface = ModernChatInterface()
+    # 初始化集成聊天界面
+    chat_interface = IntegratedChatInterface()
     
     # 读取CSS文件内容
     css_path = Path(__file__).parent / "components" / "styles" / "modern_theme.css"
@@ -286,6 +286,11 @@ def main(config_path: str = "config/default.yaml", port: int = 8022, debug: bool
     print(f"📁 配置文件: {config_path}")
     print(f"🌐 端口: {port}")
     print(f"🐛 调试模式: {debug}")
+    
+    # 检查配置文件是否存在
+    if not os.path.exists(config_path):
+        print(f"⚠️  配置文件不存在: {config_path}")
+        print("使用默认配置...")
     
     # 创建应用
     app = create_modern_emind_app()

@@ -1,23 +1,51 @@
 """
-EMIND 现代化聊天界面 - 中文界面
+EMIND 现代化聊天界面 - 与后端集成版本
 """
 
 import gradio as gr
 import json
 import time
+import os
+import sys
 from typing import List, Dict, Any
+from pathlib import Path
+
+# 添加项目根目录到Python路径
+project_root = Path(__file__).parent.parent.parent.parent.parent
+sys.path.insert(0, str(project_root))
+
 from ..components.modern_components import ModernUIComponents, ModernChatInterface
 
+# 导入后端逻辑
+try:
+    from emind.core.agent import MusicAgent
+    from emind.core.config_manager import get_secure_config
+    BACKEND_AVAILABLE = True
+except ImportError:
+    BACKEND_AVAILABLE = False
+    print("警告: 后端模块不可用，将使用模拟响应")
 
-class ModernChatInterface:
-    """现代化聊天界面"""
+
+class IntegratedChatInterface:
+    """与后端集成的现代化聊天界面"""
     
-    def __init__(self):
+    def __init__(self, config_path: str = "config/default.yaml"):
         self.messages = []
         self.current_emotion = "neutral"
+        self.config_path = config_path
+        self.agent = None
+        
+        # 初始化后端代理
+        if BACKEND_AVAILABLE:
+            try:
+                self.agent = MusicAgent(config_path, mode="gradio")
+                print("✅ 后端代理初始化成功")
+            except Exception as e:
+                print(f"❌ 后端代理初始化失败: {e}")
+                self.agent = None
     
     def create_chat_ui(self):
-        """创建现代化聊天界面"""
+        """创建与后端集成的聊天界面"""
         
         # 头部
         header = ModernUIComponents.create_header(
@@ -44,29 +72,30 @@ class ModernChatInterface:
                 
                 with gr.Column(scale=1):
                     # 快速操作
-                    quick_actions = ModernUIComponents.create_quick_action_button(
-                        "🎵 欢快流行歌曲", 
-                        "🎵", 
-                        "sendQuickMessage('创作一首欢快的流行歌曲')"
-                    )
+                    quick_actions_html = """
+                    <div class="emind-card">
+                        <h3 style="margin: 0 0 1rem 0; color: var(--text-primary); display: flex; align-items: center;">
+                            <span style="margin-right: 0.5rem;">⚡</span>
+                            快速操作
+                        </h3>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            <button class="emind-btn" onclick="sendQuickMessage('创作一首欢快的流行歌曲')" style="font-size: 0.875rem; padding: 0.75rem 1rem;">
+                                🎵 欢快流行歌曲
+                            </button>
+                            <button class="emind-btn" onclick="sendQuickMessage('创作一首放松的轻音乐')" style="font-size: 0.875rem; padding: 0.75rem 1rem;">
+                                🌊 放松轻音乐
+                            </button>
+                            <button class="emind-btn" onclick="sendQuickMessage('创作一首激昂的摇滚歌曲')" style="font-size: 0.875rem; padding: 0.75rem 1rem;">
+                                🎸 激昂摇滚歌曲
+                            </button>
+                            <button class="emind-btn" onclick="sendQuickMessage('创作一首悲伤的抒情歌曲')" style="font-size: 0.875rem; padding: 0.75rem 1rem;">
+                                💔 悲伤抒情歌曲
+                            </button>
+                        </div>
+                    </div>
+                    """
                     
-                    quick_actions2 = ModernUIComponents.create_quick_action_button(
-                        "🌊 放松轻音乐", 
-                        "🌊", 
-                        "sendQuickMessage('创作一首放松的轻音乐')"
-                    )
-                    
-                    quick_actions3 = ModernUIComponents.create_quick_action_button(
-                        "🎸 激昂摇滚歌曲", 
-                        "🎸", 
-                        "sendQuickMessage('创作一首激昂的摇滚歌曲')"
-                    )
-                    
-                    quick_actions4 = ModernUIComponents.create_quick_action_button(
-                        "💔 悲伤抒情歌曲", 
-                        "💔", 
-                        "sendQuickMessage('创作一首悲伤的抒情歌曲')"
-                    )
+                    gr.HTML(quick_actions_html)
                     
                     # 语音输入
                     voice_input = gr.Audio(
@@ -119,8 +148,8 @@ class ModernChatInterface:
             else:
                 new_history = history + user_message_html
             
-            # 模拟AI响应（替换为实际的AI调用）
-            ai_response = self.generate_ai_response(message)
+            # 获取AI响应
+            ai_response = self.get_ai_response(message)
             
             # 添加AI响应到历史
             ai_message_html = ModernUIComponents.create_message_bubble(
@@ -131,9 +160,22 @@ class ModernChatInterface:
             
             return new_history, ""
         
-        def generate_ai_response(message: str) -> str:
-            """生成AI响应（占位符）"""
-            # 这里将被替换为实际的AI集成
+        def get_ai_response(self, message: str) -> str:
+            """获取AI响应"""
+            if self.agent and BACKEND_AVAILABLE:
+                try:
+                    # 使用真实的后端代理
+                    response = self.agent.skillchat(message, self.agent.chatbot, self.agent.chat_context)
+                    return response
+                except Exception as e:
+                    print(f"后端处理错误: {e}")
+                    return f"抱歉，处理您的请求时出现错误: {str(e)}"
+            else:
+                # 使用模拟响应
+                return self.get_mock_response(message)
+        
+        def get_mock_response(self, message: str) -> str:
+            """获取模拟响应"""
             responses = [
                 "我将为您创作这首音乐！让我开始生成一首美妙的曲目...",
                 "很棒的想法！我正在处理您的请求，很快就会有令人惊叹的作品。",
@@ -146,9 +188,9 @@ class ModernChatInterface:
             return random.choice(responses)
         
         def process_voice_input(audio_path: str) -> str:
-            """处理语音输入（占位符）"""
+            """处理语音输入"""
             if audio_path:
-                # 这里将集成语音转文字
+                # 这里可以集成语音转文字功能
                 return "我听到了您的语音输入。让我为您处理..."
             return ""
         
@@ -305,12 +347,12 @@ class ModernChatInterface:
         return gr.HTML(settings_html)
 
 
-def create_modern_chat_demo():
-    """创建现代化聊天界面演示"""
-    chat_interface = ModernChatInterface()
+def create_integrated_chat_demo():
+    """创建集成聊天界面演示"""
+    chat_interface = IntegratedChatInterface()
     
     with gr.Blocks(
-        title="EMIND - 现代化聊天"
+        title="EMIND - 集成聊天界面",
         ,
         theme=gr.themes.Soft()
     ) as demo:
@@ -320,5 +362,5 @@ def create_modern_chat_demo():
 
 
 if __name__ == "__main__":
-    demo = create_modern_chat_demo()
-    demo.launch(server_name="0.0.0.0", server_port=8024)
+    demo = create_integrated_chat_demo()
+    demo.launch(server_name="0.0.0.0", server_port=8026)
