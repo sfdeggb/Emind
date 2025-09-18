@@ -1,0 +1,25 @@
+# Emind Configuration File
+# 注意：敏感信息已移至环境变量，请参考 .env.template 文件
+
+# optional tools - API密钥通过环境变量配置
+huggingface:
+  token: ""  # 从环境变量 HUGGINGFACE_TOKEN 读取
+spotify:
+  client_id: ""  # 从环境变量 SPOTIFY_CLIENT_ID 读取
+  client_secret: ""  # 从环境变量 SPOTIFY_CLIENT_SECRET 读取
+  access_token: ""  # 从环境变量 SPOTIFY_ACCESS_TOKEN 读取
+google:
+  api_key: ""  # 从环境变量 GOOGLE_API_KEY 读取
+  custom_search_engine_id: ""  # 从环境变量 GOOGLE_CUSTOM_SEARCH_ENGINE_ID 读取
+
+# agent settings
+debug: false
+use_azure_openai: false
+model: gpt-3.5-turbo-instruct
+device: cuda:0
+local_fold: models
+log_file: logs/debug.log
+src_fold: public/audios
+disabled_tools: 
+history_len: 200
+candidate_tools: 5
