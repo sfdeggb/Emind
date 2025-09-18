@@ -1,0 +1,22 @@
+# optional tools
+huggingface:
+  token: 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
+spotify:
+  client_id: 3c62a2888908430a83391d698771014c
+  client_secret: 9c4fc7f0edf54d849e7ec63f41a9276b
+  access_token: BQBsP5Kb-SEMfwYAHSeiQOB1idCQ6IdHxlJoKbn56JBj-iKRhapiydSGM_2tuYCs8IKky-uyv7g7ZbOgahUPJYCJQ7pec0vYGqlKAsS2rNNPTUGrzrM
+google:
+  api_key: AIzaSyApOLx6gbrghnSq1p0yyADAF22al3Z9WjU
+  custom_search_engine_id: d5cd8ab8be4884a4e
+# agent settings
+debug: false
+use_azure_openai: false
+#model: text-davinci-003
+model: gpt-3.5-turbo-instruct
+device: cuda:0
+local_fold: models
+log_file: logs/debug.log
+src_fold: public/audios
+disabled_tools: 
+history_len: 200
+candidate_tools: 5

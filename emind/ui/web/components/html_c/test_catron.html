@@ -1,0 +1,38 @@
+<svg width="800" height="200" xmlns="http://www.w3.org/2000/svg" style="border: 1px solid #000;">
+	<text x="50" y="50" text-anchor="start" font-size="20" fill="black">EMIND</text>
+	<!-- 动态添加的文本将放在这里 -->
+  </svg>
+  
+  <script>
+	document.addEventListener("DOMContentLoaded", function() {
+	  const svgNS = "http://www.w3.org/2000/svg";
+	  const text = "YOUR MUSIC FRIEND";
+	  const svg = document.querySelector("svg");
+	  let delay = 0;
+  
+	  for (let i = 0; i < text.length; i++) {
+		const character = text[i];
+		const textElement = document.createElementNS(svgNS, "text");
+		textElement.setAttribute("x", 50 + i * 14); // 假设每个字符的间距是14单位
+		textElement.setAttribute("y", 100);
+		textElement.setAttribute("font-size", "20");
+		textElement.setAttribute("fill", "black");
+		textElement.textContent = character;
+		textElement.style.opacity = 0;
+  
+		svg.appendChild(textElement);
+  
+		// 使用闭包来为每个字符设置延时动画
+		(function(textElement, delay) {
+		  setTimeout(() => {
+			textElement.style.opacity = 1;
+		  }, delay);
+		})(textElement, delay);
+  
+		delay += 200; // 每个字符之后延迟200毫秒显示
+	  }
+	});
+  </script>
+  
+
+  
